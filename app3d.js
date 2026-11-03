@@ -197,7 +197,7 @@ function spawnOrb() {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t.tex, transparent: true, depthWrite: false, fog: false, toneMapped: false }));
   const aim = Math.random() < 0.45 ? px + rnd(-0.25, 0.25) : rnd(-0.95, 0.95);
   sp.userData = { t, x: Math.max(-1, Math.min(1, aim)), done: 0, hit: 0 };
-  sp.position.set(sp.userData.x * LANE, TUN_Y - 0.05, -150); sp.scale.setScalar(1.25);
+  sp.position.set(sp.userData.x * LANE, TUN_Y - 0.05, -150); sp.scale.setScalar(1.5); sp.renderOrder = 10;
   world.add(sp); orbs.push(sp);
 }
 
@@ -378,7 +378,7 @@ const gregMid = () => toScreen(new THREE.Vector3(greg.position.x, greg.position.
 function lightWave() {
   waveT = 1.3;
   const late = sectIdx >= 3;
-  flash = Math.max(flash, late ? 0.12 : 0.28); pulse = late ? 0.5 : 0.85;
+  flash = Math.max(flash, late ? 0.08 : 0.18); pulse = late ? 0.5 : 0.85;
   if (!late) { addRing(-20, 1); addRing(-35, 1); }
   for (let i = 0; i < 7; i++) fxs.push({ k: "star4", x: W / 2 + rnd(-W * 0.36, W * 0.36), y: H * 0.4 + rnd(-H * 0.12, H * 0.1), r: rnd(9, 20), c: ["#ff4fd8", "#ffd76a", "#b46bff", "#ffffff"][i % 4], l: 1, d: rnd(0, 0.35), vy: -10 });
   if (sectIdx >= 2) { const p = gregTop(); fxs.push({ k: "heart", x: p.x, y: p.y, r: 26, c: "#ff4fa8", l: 1.4, d: 0.15, vy: -55 }); }
@@ -428,13 +428,13 @@ function frame(nowMs) {
   let baseHaze = 0.08, targetSpeed = 22;
   if (state === "start") { baseHaze = 0.04; targetSpeed = 9; }
   else if (si === 0) { baseHaze = 0.05 + Math.min(1, t / 41) * 0.08; targetSpeed = lerp(10, 45, camE) + Math.min(1, t / 41) * 15; }
-  else if (si === 1) { baseHaze = 0.2 + Math.min(1, (t - 41) / 8) * 0.5; targetSpeed = 75; }
-  else if (si === 2) { baseHaze = 0; targetSpeed = 90; }
+  else if (si === 1) { baseHaze = 0.15 + Math.min(1, (t - 41) / 8) * 0.25; targetSpeed = 75; }
+  else if (si === 2) { baseHaze = 0; targetSpeed = 78; }
   else { outroK = Math.min(1, (t - 137) / 14); baseHaze = 0; targetSpeed = lerp(80, 6, outroK); }
   hitHaze = Math.max(0, hitHaze - dt * 0.9);
   haze += (Math.min(1, baseHaze + hitHaze) - haze) * Math.min(1, dt * 3);
   speed += (targetSpeed + (beat ? 22 : 0) - speed) * Math.min(1, dt * 2.5);
-  if (beat && state === "play" && si !== 1 && outroK < 0.3 && camE > 0.9) addRing(-150, 0);
+  if (beat && state === "play" && si !== 1 && outroK < 0.3 && camE > 0.9 && (si !== 2 || Math.random() < 0.5)) addRing(-150, 0);
   flash = Math.max(0, flash - dt * 1.6); shake = Math.max(0, shake - dt * 3); impact = Math.max(0, impact - dt * 2.2);
   waveT = Math.max(0, waveT - dt);
 
@@ -474,12 +474,12 @@ function frame(nowMs) {
     M.compose(V, Q.identity(), SC); streaks.setMatrixAt(s.i, M);
   }
   streaks.instanceMatrix.needsUpdate = true; if (dirty) streaks.instanceColor.needsUpdate = true;
-  streakMat.opacity = (0.8 - haze * 0.2) * (1 - outroK * 0.75);
+  streakMat.opacity = (0.7 - haze * 0.2) * (si === 2 ? 0.75 : 1) * (1 - outroK * 0.75);
   const dp = dustGeo.attributes.position.array;
   for (let i = 0; i < DN; i++) { dp[i * 3 + 2] += speed * dt * 0.35; if (dp[i * 3 + 2] > 8) dp[i * 3 + 2] = -150; }
   dustGeo.attributes.position.needsUpdate = true;
-  nebula.rotation.z += dt * 0.02; nebula.children.forEach(n => n.material.opacity = (si === 1 ? 0.7 : 0.45) * fade + pulse * 0.1);
-  coreGlow.material.opacity = (0.22 + bassNow * 0.3 + pulse * 0.2) * fade; coreGlow.scale.setScalar(45 + bassNow * 30);
+  nebula.rotation.z += dt * 0.02; nebula.children.forEach(n => n.material.opacity = (si === 1 ? 0.5 : 0.35) * fade + pulse * 0.06);
+  coreGlow.material.opacity = (0.16 + bassNow * 0.18 + pulse * 0.12) * fade; coreGlow.scale.setScalar(45 + bassNow * 30);
   for (let i = rings.length - 1; i >= 0; i--) {
     const r = rings[i]; r.position.z += speed * dt * (r.userData.big ? 1.15 : 1); r.rotation.z += dt * r.userData.spin;
     const z = r.position.z;
@@ -540,7 +540,7 @@ function frame(nowMs) {
     if (k !== "coverCut" && poseW[k] > bw) { bw = poseW[k]; best = k; }
   }
   if (best !== ghostName) { ghostName = best; ghost.material.map = POSE[best].material.map; ghost.scale.x = POSE[best].scale.x; }
-  ghost.material.opacity = Math.min(0.7, haze * 0.9 + impact * 0.5) * (1 - covK);
+  ghost.material.opacity = Math.min(0.35, haze * 0.4 + impact * 0.4) * (1 - covK);
   ghost.position.set(Math.sin(T * 1.7) * (haze * 0.25 + impact * 0.3), Math.cos(T * 1.3) * haze * 0.06, -0.01);
   // billboard toward the camera (upright)
   card.scale.setScalar(lerp(1, 1.4, camE) * (1 - outroK * 0.15));
@@ -583,10 +583,10 @@ function frame(nowMs) {
   camera.fov = lerp(COVER_FOV, 62 + Math.min(14, speed * 0.08), k) * (1 - outroK * 0.1); camera.updateProjectionMatrix();
 
   // ---- post ----
-  after.uniforms.damp.value = Math.min(0.93, (state === "start" ? 0.3 : 0.5) + haze * 0.38) * (1 - outroK * 0.5);
-  bloom.threshold = lerp(0.88, 0.6, camE) + outroK * 0.25;
-  bloom.strength = (0.7 + pulse * 0.25 + bassNow * 0.2) * (1 - haze * 0.25) * (si === 3 ? 0.7 : 1);
-  rgb.uniforms.amount.value = 0.0008 + haze * 0.006 + impact * 0.012;
+  after.uniforms.damp.value = Math.min(0.72, (state === "start" ? 0.3 : 0.42) + haze * 0.3) * (1 - outroK * 0.5); // shorter trails = less smear
+  bloom.threshold = lerp(0.88, 0.72, camE) + outroK * 0.2;
+  bloom.strength = (0.5 + pulse * 0.15 + bassNow * 0.12) * (1 - haze * 0.3) * (si >= 2 ? 0.75 : 1);
+  rgb.uniforms.amount.value = 0.0006 + haze * 0.0025 + impact * 0.008;
   composer.render(dt);
 
   flashEl.style.opacity = flash;
