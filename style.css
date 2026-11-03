@@ -142,3 +142,16 @@ canvas#tunnel{filter:saturate(calc(1 + var(--haze,0) * .2)) contrast(calc(1.05 +
 .go{opacity:.55;pointer-events:none;transition:opacity .4s}
 .start.live .go{opacity:1;pointer-events:auto}
 
+
+/* how to play, above the start button */
+.howto{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(440px,100%);margin-bottom:6px}
+.howto li{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 9px;border-radius:14px;background:rgba(10,3,24,.55);border:1px solid rgba(255,79,216,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-align:center}
+.howto .ic{height:26px;display:flex;align-items:center;justify-content:center;color:#7ff9ff}
+.howto b{font:800 11.5px/1 Montserrat,sans-serif;letter-spacing:.12em;color:#fff}
+.howto small{font-size:10.5px;line-height:1.25;color:rgba(255,255,255,.65)}
+.howto .orbs{gap:3px}
+.howto .orbs i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:800 9px/1 Montserrat,sans-serif;font-style:normal;color:#fff3b0;border:1.5px solid}
+.howto .o1{background:#a66a00;border-color:#fff3a0}
+.howto .o2{background:#4b108f;border-color:#f0c6ff}
+.howto .o3{background:#0a3f8f;border-color:#c8ecff}
+@media (max-width:380px){.howto small{display:none}}

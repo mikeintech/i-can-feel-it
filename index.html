@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,600;0,800;1,800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <div class="app" id="app" data-state="start">
@@ -47,6 +47,11 @@
   <section class="start" id="start">
     <div class="cover" id="cover"></div>
     <div class="start-ui">
+      <ul class="howto" aria-label="How to play">
+        <li><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1a1.5 1.5 0 0 1 3 0v2m0-1a1.5 1.5 0 0 1 3 0v4a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.2-2.3L4.5 14a1.5 1.5 0 0 1 2.4-1.8L9 14"/><path d="M3 4l-1.5 1.5L3 7M21 4l1.5 1.5L21 7" /></svg></span><b>STEER</b><small>Drag or ← →</small></li>
+        <li><span class="ic orbs"><i class="o1">$</i><i class="o2"></i><i class="o3"></i></span><b>DODGE</b><small>Money, cups, noise</small></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="9" width="19" height="6" rx="3"/><path d="M5.5 12h9" stroke-width="3"/></svg></span><b>STAY CLEAR</b><small>Fill your clarity</small></li>
+      </ul>
       <button class="go" id="go"><i class="bars"></i><span>▶ TAP TO START</span><i class="bars"></i></button>
       <p class="sub">Enter the tunnel. Sound on for the full experience.</p>
     </div>
