@@ -527,6 +527,7 @@ function frame(nowMs) {
   if (dashT > 0) want = "dash";
   if (outroK > 0.35) want = "back";
   else if (impact > 0.35) want = "hit";
+  else if (waveT > 0) want = "arms"; // the I CAN FEEL IT move beats dash and steer
   else if (vel > 0.45) want = "steer-right";
   else if (vel < -0.45) want = "steer-left";
   dashT = Math.max(0, dashT - dt);
