@@ -333,7 +333,7 @@ song.addEventListener("ended", finish);
 function reset() {
   px = pxS = 0; hitHaze = 0; clarity = penalty = bonus = hits = dodged = streak = 0; setStreak();
   rings.forEach(r => world.remove(r)); rings.length = 0; orbs.forEach(o => world.remove(o)); orbs.length = 0;
-  pops.length = 0; fxs.length = 0; lyricIdx = 0; outroK = 0; ended = false; sectIdx = -1; camE = 0;
+  pops.length = 0; fxs.length = 0; lyricIdx = 0; outroK = 0; ended = false; sectIdx = -1; camE = 0; nextOrb = 0.4;
   song.currentTime = 0;
 }
 function start() {
@@ -441,8 +441,17 @@ function frame(nowMs) {
   while (state === "play" && lyricIdx < LYRICS.length && t >= LYRICS[lyricIdx][0]) {
     const L = LYRICS[lyricIdx++]; if (t - L[0] < 1.5) showLyric(L[1], L[2]);
   }
-  if (state === "play" && camE > 0.95 && ((si === 1 && t < 78) || (si === 0 && t > 34))) {
-    nextOrb -= dt; if (nextOrb <= 0) { spawnOrb(); nextOrb = si === 1 ? rnd(0.75, 1.2) : rnd(1.6, 2.4); }
+  // obstacles from the moment the camera lands until the outro settles
+  if (state === "play" && camE > 0.95 && t < 150) {
+    nextOrb -= dt;
+    if (nextOrb <= 0) {
+      spawnOrb();
+      if (si === 2 && Math.random() < 0.3) spawnOrb(); // chorus doubles
+      nextOrb = si === 0 ? rnd(1.1, 1.6) - Math.min(1, t / 41) * 0.35
+              : si === 1 ? rnd(0.7, 1.05)
+              : si === 2 ? rnd(0.8, 1.15)
+              : rnd(1.3, 1.9) * (1 + outroK);
+    }
   }
   if (state === "play") {
     clarity = Math.max(0, Math.min(100, (t / DUR()) * 100 - penalty + bonus));
