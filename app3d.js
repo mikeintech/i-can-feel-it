@@ -19,30 +19,14 @@ const SECTIONS = [
   { name: "CHORUS", to: 137, label: "1:20 – 2:17" },
   { name: "OUTRO",  to: 999, label: "2:17 – END" }
 ];
-// full lyrics, transcribed from the track with Whisper (large-v3-turbo), cleaned into lines
-const LINES = [
-  [19.3, "Oh na na, I can feel it, I can feel it"], [24.0, "Oh na na, I can feel it, I can feel it"],
-  [27.4, "Oh na na"], [33.0, "Oh na na, I can feel it, I can feel it"], [37.9, "Oh na na, I can feel it, I can feel it"], [39.9, "Oh na na"],
-  [41.98, "I remember times that I couldn't get it right"], [44.88, "Couldn't gather all my thoughts, do I fight or do I fly?"],
-  [48.88, "Music's in the highest, so it's never gonna die"], [52.3, "Standing at the top, had to elevate my life"],
-  [54.84, "Like a, like a, like a, like a pop star"], [59.1, "Moving confident and I'm feeling like a rock star"],
-  [62.38, "Now I'm at the top of my game like an all star"], [65.3, "Money piling up, running up like a trap star"],
-  [68.3, "Yeah, yeah, I feel like money"], [70.56, "Yeah, yeah, I feel like sex"], [72.34, "Yeah, yeah, I feel it coming"],
-  [74.08, "Yeah, yeah, I'm feeling great"], [75.72, "Yeah, yeah, I'm feeling money"], [77.52, "Yeah, yeah, I feel like sex"],
-  [78.76, "Yeah, yeah, I feel it coming"], [82.76, "Yeah, yeah, yeah"],
-  [88.02, "Oh na na"], [89.22, "I can feel it, I can feel it"], [91.32, "Oh na na"], [92.64, "I can feel it, I can feel it"], [94.74, "Oh na na"],
-  [96.5, "Yeah, yeah, yeah"], [101.02, "Oh na na"], [102.98, "I can feel it, I can feel it"], [105.04, "Oh na na"], [106.32, "I can feel it, I can feel it"],
-  [108.5, "I'm feeling great"], [110.0, "Yeah, yeah, I feel like money"], [111.7, "Yeah, yeah, I feel like sex"], [113.46, "Yeah, yeah, I feel it coming"],
-  [115.2, "Yeah, yeah, I'm feeling great"], [116.86, "Yeah, yeah, I'm feeling money"], [118.66, "Yeah, yeah, I feel like sex"],
-  [120.42, "Yeah, yeah, I feel it coming"], [122.18, "Yeah, yeah, yeah"],
-  [128.36, "Oh na na"], [130.36, "I can feel it, I can feel it"], [132.48, "Oh na na"], [133.76, "I can feel it, I can feel it"], [135.88, "Oh na na"],
-  [136.98, "Yeah, yeah, yeah, yeah"], [141.52, "Can you feel it?"], [142.82, "Oh na na"], [144.14, "I can feel it, I can feel it"],
-  [146.18, "Oh na na"], [147.58, "I can feel it, I can feel it"], [149.64, "Oh na na"],
-  [150.96, "Can you feel it, can you?"], [155.16, "Can you feel it, can you?"], [158.58, "Can you feel it, can you?"],
-  [162.0, "Can you feel it?"], [163.44, "Oh na na"], [167.5, ""]
+const LYRICS = [
+  [19.3, "I CAN FEEL IT"], [24.5, "I CAN FEEL IT"], [33.0, "I CAN FEEL IT"], [38.2, "I CAN FEEL IT"],
+  [41.9, "I remember times that I couldn't get it right", 1], [44.6, "Couldn't gather all my thoughts", 1],
+  [46.7, "Do I fight or do I fly?", 1], [51.3, "Had to elevate my life", 1],
+  [87.9, "I CAN FEEL IT"], [92.6, "I CAN FEEL IT"], [101.6, "I CAN FEEL IT"], [106.7, "I CAN FEEL IT"],
+  [130.7, "I CAN FEEL IT"], [137.2, "CAN YOU FEEL IT?"], [144.4, "I CAN FEEL IT"],
+  [151.7, "CAN YOU FEEL IT?"], [161.9, "CAN YOU FEEL IT?"]
 ];
-// only a few big moments
-const BIG = [[19.3, "I CAN FEEL IT"], [89.22, "I CAN FEEL IT"], [141.52, "CAN YOU FEEL IT?"], [162.0, "CAN YOU FEEL IT?"]];
 const PALS = [
   [0xff2a3a, 0xff1f8f, 0xff2bd6, 0x9b3cff, 0x00e5ff, 0x00f0a0, 0xff7a1a, 0xffffff],
   [0xff1f8f, 0xff2bd6, 0x9b3cff, 0x00e5ff, 0x00f0a0, 0x9cff3c, 0xffd400, 0xff7a1a, 0xff2a3a],
@@ -301,7 +285,6 @@ let hitHaze = 0, haze = 0.1, speed = 20, clarity = 0, penalty = 0, bonus = 0, hi
 let flash = 0, lyricIdx = 0, shake = 0, sectIdx = -1, outroK = 0, ended = false, pulse = 0, bassNow = 0, impact = 0;
 let camStart = 0, camE = 0, waveT = 0, dashT = 0, nextOrb = 0, beatCool = 0, energyAvg = 0;
 const pops = [], fxs = [];
-let lineIdx = -2; const lineEl = $("#line");
 
 // ---------- audio ----------
 let actx, analyser, freq = new Uint8Array(256);
@@ -348,7 +331,6 @@ $("#muteBtn").addEventListener("click", e => { song.muted = !song.muted; e.curre
 song.addEventListener("ended", finish);
 
 function reset() {
-  lineIdx = -2; lineEl.textContent = "";
   px = pxS = 0; hitHaze = 0; clarity = penalty = bonus = hits = dodged = streak = 0; setStreak();
   rings.forEach(r => world.remove(r)); rings.length = 0; orbs.forEach(o => world.remove(o)); orbs.length = 0;
   pops.length = 0; fxs.length = 0; lyricIdx = 0; outroK = 0; ended = false; sectIdx = -1; camE = 0;
@@ -390,19 +372,15 @@ function showLyric(txt, small) {
     { duration: small ? 2600 : 2000, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
   if (!small) lightWave();
 }
-function sparkle(n) {
-  for (let i = 0; i < n; i++) fxs.push({ k: "star4", x: W / 2 + rnd(-W * 0.36, W * 0.36), y: H * 0.42 + rnd(-H * 0.14, H * 0.1), r: rnd(8, 16), c: ["#ff4fd8", "#ffd76a", "#b46bff", "#ffffff"][i % 4], l: 1, d: rnd(0, 0.3), vy: -10 });
-}
 function toScreen(v) { const p = v.clone().project(camera); return { x: (p.x + 1) / 2 * W, y: (1 - p.y) / 2 * H }; }
 const gregTop = () => toScreen(new THREE.Vector3(greg.position.x, greg.position.y + 1.9, greg.position.z));
 const gregMid = () => toScreen(new THREE.Vector3(greg.position.x, greg.position.y + 1.0, greg.position.z));
 function lightWave() {
   waveT = 1.3;
   const late = sectIdx >= 3;
-  flash = Math.max(flash, late ? 0.08 : 0.16); pulse = late ? 0.4 : 0.6;
+  flash = Math.max(flash, late ? 0.12 : 0.28); pulse = late ? 0.5 : 0.85;
   if (!late) { addRing(-20, 1); addRing(-35, 1); }
-  sparkle(6);
-  if (false) for (let i = 0; i < 7; i++) fxs.push({ k: "star4", x: W / 2 + rnd(-W * 0.36, W * 0.36), y: H * 0.4 + rnd(-H * 0.12, H * 0.1), r: rnd(9, 20), c: ["#ff4fd8", "#ffd76a", "#b46bff", "#ffffff"][i % 4], l: 1, d: rnd(0, 0.35), vy: -10 });
+  for (let i = 0; i < 7; i++) fxs.push({ k: "star4", x: W / 2 + rnd(-W * 0.36, W * 0.36), y: H * 0.4 + rnd(-H * 0.12, H * 0.1), r: rnd(9, 20), c: ["#ff4fd8", "#ffd76a", "#b46bff", "#ffffff"][i % 4], l: 1, d: rnd(0, 0.35), vy: -10 });
   if (sectIdx >= 2) { const p = gregTop(); fxs.push({ k: "heart", x: p.x, y: p.y, r: 26, c: "#ff4fa8", l: 1.4, d: 0.15, vy: -55 }); }
 }
 
@@ -460,17 +438,8 @@ function frame(nowMs) {
   flash = Math.max(0, flash - dt * 1.6); shake = Math.max(0, shake - dt * 3); impact = Math.max(0, impact - dt * 2.2);
   waveT = Math.max(0, waveT - dt);
 
-  while (state === "play" && lyricIdx < BIG.length && t >= BIG[lyricIdx][0]) {
-    const L = BIG[lyricIdx++]; if (t - L[0] < 1.5) showLyric(L[1]);
-  }
-  if (state === "play") {
-    let li = -1; for (let i = 0; i < LINES.length; i++) { if (LINES[i][0] <= t) li = i; else break; }
-    if (li !== lineIdx) {
-      lineIdx = li; const txt = li >= 0 ? LINES[li][1] : "";
-      lineEl.textContent = txt;
-      lineEl.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 280, easing: "ease-out" });
-      if (/i can feel it/i.test(txt) && camE > 0.9) sparkle(3);
-    }
+  while (state === "play" && lyricIdx < LYRICS.length && t >= LYRICS[lyricIdx][0]) {
+    const L = LYRICS[lyricIdx++]; if (t - L[0] < 1.5) showLyric(L[1], L[2]);
   }
   if (state === "play" && camE > 0.95 && ((si === 1 && t < 78) || (si === 0 && t > 34))) {
     nextOrb -= dt; if (nextOrb <= 0) { spawnOrb(); nextOrb = si === 1 ? rnd(0.75, 1.2) : rnd(1.6, 2.4); }
@@ -496,12 +465,12 @@ function frame(nowMs) {
     M.compose(V, Q.identity(), SC); streaks.setMatrixAt(s.i, M);
   }
   streaks.instanceMatrix.needsUpdate = true; if (dirty) streaks.instanceColor.needsUpdate = true;
-  streakMat.opacity = (0.68 - haze * 0.18) * (1 - outroK * 0.75);
+  streakMat.opacity = (0.8 - haze * 0.2) * (1 - outroK * 0.75);
   const dp = dustGeo.attributes.position.array;
   for (let i = 0; i < DN; i++) { dp[i * 3 + 2] += speed * dt * 0.35; if (dp[i * 3 + 2] > 8) dp[i * 3 + 2] = -150; }
   dustGeo.attributes.position.needsUpdate = true;
-  nebula.rotation.z += dt * 0.02; nebula.children.forEach(n => n.material.opacity = (si === 1 ? 0.5 : 0.35) * fade + pulse * 0.06);
-  coreGlow.material.opacity = (0.15 + bassNow * 0.2 + pulse * 0.12) * fade; coreGlow.scale.setScalar(45 + bassNow * 30);
+  nebula.rotation.z += dt * 0.02; nebula.children.forEach(n => n.material.opacity = (si === 1 ? 0.7 : 0.45) * fade + pulse * 0.1);
+  coreGlow.material.opacity = (0.22 + bassNow * 0.3 + pulse * 0.2) * fade; coreGlow.scale.setScalar(45 + bassNow * 30);
   for (let i = rings.length - 1; i >= 0; i--) {
     const r = rings[i]; r.position.z += speed * dt * (r.userData.big ? 1.15 : 1); r.rotation.z += dt * r.userData.spin;
     const z = r.position.z;
@@ -541,7 +510,7 @@ function frame(nowMs) {
   const gx = pxS * LANE * (1 - outroK);
   greg.position.set(gx, -1.3 * camE * (1 - outroK) + Math.sin(T * 3) * 0.05 * camE * (1 - outroK), 0);
   greg.rotation.z = -tilt * 0.08 * camE * (1 - outroK);
-  aura.material.opacity = (0.18 + pulse * 0.15) * (state === "end" ? 0 : 1);
+  aura.material.opacity = (0.28 + pulse * 0.25) * (state === "end" ? 0 : 1);
   let want = "fly";
   if (si === 0 && camE > 0.95 && t < 8) want = "stand";
   if (si === 2) want = "arms";
@@ -593,8 +562,8 @@ function frame(nowMs) {
   // ---- post ----
   after.uniforms.damp.value = Math.min(0.93, (state === "start" ? 0.3 : 0.5) + haze * 0.38) * (1 - outroK * 0.5);
   bloom.threshold = lerp(0.88, 0.6, camE) + outroK * 0.25;
-  bloom.strength = (0.55 + pulse * 0.15 + bassNow * 0.15) * (1 - haze * 0.25) * (si === 3 ? 0.7 : 1);
-  rgb.uniforms.amount.value = 0.0006 + haze * 0.004 + impact * 0.009;
+  bloom.strength = (0.7 + pulse * 0.25 + bassNow * 0.2) * (1 - haze * 0.25) * (si === 3 ? 0.7 : 1);
+  rgb.uniforms.amount.value = 0.0008 + haze * 0.006 + impact * 0.012;
   composer.render(dt);
 
   flashEl.style.opacity = flash;
@@ -678,10 +647,10 @@ $("#shareBtn").addEventListener("click", async () => {
   g.save(); g.shadowColor = "rgba(255,40,160,.8)"; g.shadowBlur = 60; g.drawImage(img, 140, 220, 800, 800); g.restore();
   g.strokeStyle = "rgba(255,79,216,.9)"; g.lineWidth = 4; g.strokeRect(140, 220, 800, 800);
   g.textAlign = "center"; g.fillStyle = "#d7fbff"; g.font = "800 44px Montserrat, sans-serif"; g.fillText("MY CLARITY", 540, 1170);
-  g.font = '400 280px "Bebas Neue", sans-serif'; g.fillStyle = "#e8fdff"; g.shadowColor = "#00e5ff"; g.shadowBlur = 40;
+  g.font = "italic 800 230px Montserrat, sans-serif"; g.fillStyle = "#bff8ff"; g.shadowColor = "#00e5ff"; g.shadowBlur = 40;
   g.fillText(Math.round(clarity) + "%", 540, 1400); g.shadowBlur = 0;
-  g.font = '400 150px "Bebas Neue", sans-serif'; g.fillStyle = "#fff"; g.shadowColor = "rgba(255,90,200,.6)"; g.shadowBlur = 24;
-  g.fillText("I CAN FEEL IT", 540, 1590); g.shadowBlur = 0;
+  g.font = "italic 800 92px Montserrat, sans-serif"; g.fillStyle = "#fff"; g.shadowColor = "#ff2bd6"; g.shadowBlur = 30;
+  g.fillText("I CAN FEEL IT.", 540, 1580); g.shadowBlur = 0;
   g.font = "800 44px Montserrat, sans-serif"; g.fillStyle = "#fff";
   const w1 = g.measureText("GREG").width, w2 = g.measureText("+ECOZ").width, x0 = 540 - (w1 + w2 + 16) / 2;
   g.textAlign = "left"; g.fillText("GREG", x0, 1720);
