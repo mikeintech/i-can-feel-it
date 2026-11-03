@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>I Can Feel It · Greg Tecoz</title>
+<meta name="description" content="Greg Tecoz, I Can Feel It. Ride the tunnel, dodge the haze, and get clear.">
+<meta name="theme-color" content="#05020c">
+<meta property="og:title" content="Greg Tecoz · I Can Feel It">
+<meta property="og:description" content="A single you can ride. Dodge the haze. Get clear. Can you feel it?">
+<meta property="og:image" content="img/cover.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,600;0,800;1,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+<div class="app" id="app" data-state="start">
+  <canvas id="tunnel" aria-hidden="true"></canvas>
+  <canvas id="fx2d" aria-hidden="true"></canvas>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="vig" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+
+  <p class="lyric" id="lyric" aria-live="off"></p>
+
+  <!-- in-game HUD -->
+  <header class="hud" id="hud">
+    <div class="brand"><span class="logo">GREG<b>+ECOZ</b></span><span class="title">I CAN FEEL IT</span></div>
+    <div class="meter">
+      <div class="meter-top"><span class="lbl">CLARITY</span><b id="clarN">0%</b></div>
+      <div class="bar"><i id="clarBar"></i></div>
+      <div class="meter-sub"><span id="sect">♫ 0:00 – 0:41 · INTRO</span>
+        <span class="streak" id="streak"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-6 7 6"/><path d="M5 18l7-6 7 6"/></svg>STREAK <b>×0</b></span></div>
+    </div>
+    <div class="tools">
+      <button id="muteBtn" aria-label="Mute">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+      </button>
+    </div>
+  </header>
+  <p class="line" id="line" aria-live="polite"></p>
+  <canvas class="wave" id="wave" aria-hidden="true"></canvas>
+  <p class="hint" id="hint"><span>←</span> DRAG TO STEER <span>→</span></p>
+
+  <!-- start -->
+  <section class="start" id="start">
+    <div class="cover" id="cover"></div>
+    <div class="start-ui">
+      <button class="go" id="go"><i class="bars"></i><span>▶ TAP TO START</span><i class="bars"></i></button>
+      <p class="sub">Enter the tunnel. Sound on for the full experience.</p>
+    </div>
+  </section>
+
+  <!-- ending -->
+  <section class="end" id="end" aria-labelledby="endQ">
+    <p class="endlogo">✦ GREG<b>+ECOZ</b> ✦</p>
+    <h2 id="endQ">CAN YOU FEEL IT?</h2>
+    <div class="score">
+      <svg viewBox="0 0 120 120" class="ring"><circle cx="60" cy="60" r="52"/><circle id="ringFill" cx="60" cy="60" r="52"/></svg>
+      <div><small>YOUR CLARITY</small><b id="endN">0%</b></div>
+    </div>
+    <p class="note" id="endNote">You stayed clear.</p>
+    <div class="ctas">
+      <a class="btn stream" id="streamBtn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="11" fill="#000"/><path d="M6.5 9.2c3.8-1.1 7.8-.7 11 1.1M7 12.3c3.2-.9 6.5-.6 9.2.9M7.6 15.2c2.6-.7 5.2-.5 7.4.7" stroke="#22e36b" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+        STREAM NOW</a>
+      <a class="btn presave" id="presaveBtn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        WATCH ON YOUTUBE</a>
+      <button class="btn share" id="shareBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>
+        SHARE YOUR RESULT</button>
+    </div>
+    <button class="again" id="again">↺ Ride it again</button>
+  </section>
+
+  <p class="credit">Experience by <a href="https://mikeintech.github.io/yupefer/" target="_blank" rel="noopener">yupefer</a></p>
+</div>
+
+<audio id="song" src="audio/i-can-feel-it.mp3" preload="auto"></audio>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="app3d.js?v=15"></script>
+</body>
+</html>
