@@ -544,6 +544,11 @@ function frame(nowMs) {
   // billboard toward the camera (upright)
   card.scale.setScalar(lerp(1, 1.4, camE) * (1 - outroK * 0.15));
   card.rotation.y = Math.atan2(camera.position.x - greg.position.x, camera.position.z - greg.position.z);
+  // start screen: Greg drifts and turns a touch in 3D
+  const fl = 1 - camE;
+  card.rotation.y += Math.sin(T * 0.55) * 0.22 * fl;
+  card.rotation.x = Math.sin(T * 0.42 + 1) * 0.05 * fl;
+  card.position.y = Math.sin(T * 0.8) * 0.07 * fl;
 
   // ---- cover words: in place for the cover, then they fly past the camera ----
   if (tICan) {
@@ -554,6 +559,14 @@ function frame(nowMs) {
     const op = Math.max(0, 1 - k * 1.4);
     tICan.material.opacity = tFeel.material.opacity = tLogo.material.opacity = op;
     coverTxt.visible = op > 0.01;
+    // start screen: words float and tilt gently, each on its own rhythm
+    const fl = 1 - k;
+    [[tICan, 0], [tFeel, 2.1], [tLogo, 4.2]].forEach(([m, ph]) => {
+      m.position.y += Math.sin(T * 0.7 + ph) * 0.08 * fl;
+      m.position.z += Math.sin(T * 0.5 + ph) * 0.12 * fl;
+      m.rotation.y = Math.sin(T * 0.45 + ph) * 0.18 * fl;
+      m.rotation.x = Math.sin(T * 0.6 + ph) * 0.06 * fl;
+    });
   }
 
   // ---- camera ----
